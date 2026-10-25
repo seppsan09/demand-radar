@@ -77,7 +77,7 @@ def pct_change(new, old):
 # ---------- Stellenanzeigen ----------
 
 def age_days(ad: dict) -> int | None:
-    for key in ("aktuelleVeroeffentlichungsdatum", "veroeffentlichungsdatum", "modifikationsTimestamp"):
+    for key in ("aktuelleVeroeffentlichungsdatum", "veroeffentlichungsdatum", "ersteVeroeffentlichungsdatum", "veroeffentlichtAm", "modifikationsTimestamp", "aenderungsdatum"):
         v = ad.get(key)
         if v:
             try:
@@ -89,7 +89,7 @@ def age_days(ad: dict) -> int | None:
 
 
 def parse_jobs(payload: dict) -> dict:
-    ads = payload.get("stellenangebote") or []
+    ads = payload.get("stellenangebote") or payload.get("ergebnisliste") or []
     try:
         count = int(str(payload.get("maxErgebnisse", len(ads))).replace(".", ""))
     except ValueError:
@@ -97,7 +97,10 @@ def parse_jobs(payload: dict) -> dict:
     ages = [a for a in (age_days(ad) for ad in ads) if a is not None and a >= 0]
     employers: dict[str, int] = {}
     for ad in ads:
-        name = (ad.get("arbeitgeber") or "").strip()
+        emp = ad.get("arbeitgeber") or ad.get("arbeitgeberName") or ""
+        if isinstance(emp, dict):
+            emp = emp.get("name") or emp.get("anzeigeName") or ""
+        name = str(emp).strip()
         if name:
             employers[name] = employers.get(name, 0) + 1
     top = sorted(employers.items(), key=lambda kv: -kv[1])[:3]
@@ -120,7 +123,7 @@ def fetch_jobs(term: str, session: requests.Session) -> dict:
                 payload = r.json()
                 if not DEBUG:
                     DEBUG.update({"url": url, "keys": sorted(payload.keys()),
-                                  "first_ad_keys": sorted((payload.get("stellenangebote") or [{}])[0].keys())})
+                                  "first_ad": (payload.get("stellenangebote") or payload.get("ergebnisliste") or [{}])[0]})
                 return parse_jobs(payload)
             last_err = f"HTTP {r.status_code}"
         except requests.RequestException as e:
