@@ -1,1 +1,32 @@
 date,niche,term,recent,baseline,ratio,source,status
+2026-10-25,V,Kurtaxe,27.5,32.6,0.84,trendspyg,ok
+2026-10-25,V,Ferienwohnung Steuer,0.0,3.1,0.0,trendspyg,ok
+2026-10-25,H,Heizlastberechnung,23.0,26.4,0.87,trendspyg,ok
+2026-10-25,H,Wärmepumpe Angebot,62.5,70.0,0.89,trendspyg,ok
+2026-10-25,W,Handwerker finden,22.0,25.2,0.87,trendspyg,ok
+2026-10-25,P,Pflegeheim finden,0.0,28.1,0.0,trendspyg,ok
+2026-10-25,P,Pflegeplatz,26.0,29.8,0.87,trendspyg,ok
+2026-10-25,S,Steuerberater finden,0.0,1.8,0.0,trendspyg,ok
+2026-10-25,R,Pflegekräfte Ausland,0.0,0.0,,trendspyg,ok
+2026-10-25,I,Sonderumlage,67.0,67.5,0.99,trendspyg,ok
+2026-10-25,I,Teilungserklärung,18.5,22.4,0.83,trendspyg,ok
+2026-10-25,D,Denkmal AfA,47.5,29.8,1.6,trendspyg,ok
+2026-10-25,E,Sanierungsfahrplan,7.0,10.6,0.66,trendspyg,ok
+2026-10-25,E,Energieberater,44.0,59.0,0.75,trendspyg,ok
+2026-10-25,PV,Balkonkraftwerk anmelden,20.5,26.5,0.77,trendspyg,ok
+2026-10-25,PV,Zählerwechsel PV,,,,,fehler
+2026-10-25,EA,Wallbox WEG,6.5,8.9,0.73,trendspyg,ok
+2026-10-25,EA,Dienstwagen laden zuhause,,,,,fehler
+2026-10-25,KI,KI Richtlinie,,,,,fehler
+2026-10-25,KI,Schatten KI,,,,,fehler
+2026-10-25,WS,Wohnungsbewerbung,,,,,fehler
+2026-10-25,WS,Mieterselbstauskunft,,,,,fehler
+2026-10-25,SW,Vibe Coding,,,,,fehler
+2026-10-25,UX,Penpot,,,,,fehler
+2026-10-25,D3,KI Rendering,,,,,fehler
+2026-10-25,MB,digitaler Produktpass,,,,,fehler
+2026-10-25,GEO,GEO Optimierung,,,,,fehler
+2026-10-25,GEO,ChatGPT Shopping,,,,,fehler
+2026-10-25,A,BFSG,,,,,fehler
+2026-10-25,A,Barrierefreiheit Website,,,,,fehler
+2026-10-25,K,Kunst verkaufen,,,,,fehler
