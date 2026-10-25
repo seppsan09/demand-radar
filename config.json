@@ -1,25 +1,230 @@
 {
-  "_hinweis": "Begriffe pro Nische. 'jobs' wird in der Jobsuche der Bundesagentur gesucht, 'trends' in Google Trends (Deutschland). Schlüssel entsprechen den Nischen im Bedarfsradar.",
+  "_hinweis": "Begriffe pro Nische. 'jobs' wird in der Jobsuche der Bundesagentur gesucht (jede Woche, alle Nischen), 'trends' in Google Trends (Deutschland). status wie im Bedarfsradar: fokus und kandidat jede Woche, beobachten im Zweiwochenwechsel, pausiert ohne Trends.",
   "nischen": {
-    "V":   {"label": "Vermieter",            "jobs": ["Ferienwohnung Verwaltung", "Buchhaltung Ferienwohnungen"], "trends": ["Kurtaxe", "Ferienwohnung Steuer"]},
-    "H":   {"label": "Heizlast",             "jobs": ["Heizlastberechnung", "Wärmepumpe Planung"], "trends": ["Heizlastberechnung", "Wärmepumpe Angebot"]},
-    "W":   {"label": "Handwerk",             "jobs": ["Fördermittel Wärmepumpe", "Bauleitung Altbau", "Kundendienst SHK"], "trends": ["Handwerker finden"]},
-    "P":   {"label": "Pflege",               "jobs": ["Pflegedokumentation", "Heimaufnahme"], "trends": ["Pflegeheim finden", "Pflegeplatz"]},
-    "S":   {"label": "Steuerberatung",       "jobs": ["Steuerfachangestellte"], "trends": ["Steuerberater finden"]},
-    "R":   {"label": "Personal",             "jobs": ["Springer Pflege", "Anerkennung Pflegefachkraft", "Recruiting Handwerk"], "trends": ["Pflegekräfte Ausland"]},
-    "I":   {"label": "Immobilienkauf",       "jobs": ["WEG Verwaltung"], "trends": ["Sonderumlage", "Teilungserklärung"]},
-    "D":   {"label": "Denkmal",              "jobs": ["Denkmalpflege", "Restaurator"], "trends": ["Denkmal AfA"]},
-    "E":   {"label": "Sanierung",            "jobs": ["Energieberater", "Sanierungsfahrplan"], "trends": ["Sanierungsfahrplan", "Energieberater"]},
-    "PV":  {"label": "PV",                   "jobs": ["Photovoltaik Netzanmeldung", "Photovoltaik Servicetechniker"], "trends": ["Balkonkraftwerk anmelden", "Zählerwechsel PV"]},
-    "EA":  {"label": "E-Auto",               "jobs": ["Ladeinfrastruktur", "Elektromobilität Fuhrpark"], "trends": ["Wallbox WEG", "Dienstwagen laden zuhause"]},
-    "KI":  {"label": "KI",                   "jobs": ["KI Manager", "KI Governance", "KI Beauftragter"], "trends": ["KI Richtlinie", "Schatten KI"]},
-    "WS":  {"label": "Wohnungssuche",        "jobs": ["Vermietung Sachbearbeiter"], "trends": ["Wohnungsbewerbung", "Mieterselbstauskunft"]},
-    "SW":  {"label": "Prototyping",          "jobs": ["Low Code Entwickler", "Citizen Developer"], "trends": ["Vibe Coding"]},
-    "UX":  {"label": "UX & Research",        "jobs": ["UX Researcher", "Usability Engineer"], "trends": ["Penpot"]},
-    "D3":  {"label": "3D Interior",          "jobs": ["3D Visualisierung Innenarchitektur"], "trends": ["KI Rendering"]},
-    "MB":  {"label": "Möbelhersteller",      "jobs": ["Produktdatenmanagement Möbel", "3D Artist Möbel"], "trends": ["digitaler Produktpass"]},
-    "GEO": {"label": "GEO / KI-Sichtbarkeit","jobs": ["Generative Engine Optimization", "SEO Manager"], "trends": ["GEO Optimierung", "ChatGPT Shopping"]},
-    "A":   {"label": "Barrierefreiheit",     "jobs": ["Barrierefreiheit Web", "Accessibility"], "trends": ["BFSG", "Barrierefreiheit Website"]},
-    "K":   {"label": "Kunst",                "jobs": ["Galerieassistenz"], "trends": ["Kunst verkaufen"]}
+    "KI": {
+      "label": "KI & Software im Betrieb",
+      "jobs": [
+        "KI Manager",
+        "KI Governance",
+        "KI Beauftragter",
+        "Low Code Entwickler",
+        "Citizen Developer"
+      ],
+      "trends": [
+        "KI Richtlinie",
+        "Schatten KI",
+        "Vibe Coding"
+      ],
+      "status": "fokus"
+    },
+    "V": {
+      "label": "Vermieter",
+      "jobs": [
+        "Ferienwohnung Verwaltung",
+        "Buchhaltung Ferienwohnungen"
+      ],
+      "trends": [
+        "Kurtaxe",
+        "Ferienwohnung Steuer"
+      ],
+      "status": "fokus"
+    },
+    "R": {
+      "label": "Personal",
+      "jobs": [
+        "Springer Pflege",
+        "Anerkennung Pflegefachkraft",
+        "Recruiting Handwerk"
+      ],
+      "trends": [
+        "Pflegekräfte Ausland"
+      ],
+      "status": "fokus"
+    },
+    "A": {
+      "label": "Barrierefreiheit",
+      "jobs": [
+        "Barrierefreiheit Web",
+        "Accessibility"
+      ],
+      "trends": [
+        "BFSG",
+        "Barrierefreiheit Website"
+      ],
+      "status": "fokus"
+    },
+    "WEG": {
+      "label": "WEG & Hausverwaltung",
+      "jobs": [
+        "WEG Verwalter",
+        "Immobilienverwalter"
+      ],
+      "trends": [
+        "WEG Verwaltung",
+        "Hausverwaltung wechseln"
+      ],
+      "status": "kandidat"
+    },
+    "E": {
+      "label": "Heizung & Sanierung",
+      "jobs": [
+        "Energieberater",
+        "Sanierungsfahrplan",
+        "Heizlastberechnung",
+        "Wärmepumpe Planung"
+      ],
+      "trends": [
+        "Sanierungsfahrplan",
+        "Energieberater",
+        "Heizlastberechnung",
+        "Wärmepumpe Angebot"
+      ],
+      "status": "beobachten"
+    },
+    "W": {
+      "label": "Handwerk",
+      "jobs": [
+        "Fördermittel Wärmepumpe",
+        "Bauleitung Altbau",
+        "Kundendienst SHK"
+      ],
+      "trends": [
+        "Handwerker finden"
+      ],
+      "status": "beobachten"
+    },
+    "P": {
+      "label": "Pflege",
+      "jobs": [
+        "Pflegedokumentation",
+        "Heimaufnahme"
+      ],
+      "trends": [
+        "Pflegeheim finden",
+        "Pflegeplatz"
+      ],
+      "status": "beobachten"
+    },
+    "I": {
+      "label": "Immobilienkauf",
+      "jobs": [
+        "WEG Verwaltung"
+      ],
+      "trends": [
+        "Sonderumlage",
+        "Teilungserklärung"
+      ],
+      "status": "beobachten"
+    },
+    "D": {
+      "label": "Denkmal",
+      "jobs": [
+        "Denkmalpflege",
+        "Restaurator"
+      ],
+      "trends": [
+        "Denkmal AfA"
+      ],
+      "status": "beobachten"
+    },
+    "PV": {
+      "label": "PV",
+      "jobs": [
+        "Photovoltaik Netzanmeldung",
+        "Photovoltaik Servicetechniker"
+      ],
+      "trends": [
+        "Balkonkraftwerk anmelden",
+        "Zählerwechsel PV"
+      ],
+      "status": "beobachten"
+    },
+    "EA": {
+      "label": "E-Auto",
+      "jobs": [
+        "Ladeinfrastruktur",
+        "Elektromobilität Fuhrpark"
+      ],
+      "trends": [
+        "Wallbox WEG",
+        "Dienstwagen laden zuhause"
+      ],
+      "status": "beobachten"
+    },
+    "WS": {
+      "label": "Wohnungssuche",
+      "jobs": [
+        "Vermietung Sachbearbeiter"
+      ],
+      "trends": [
+        "Wohnungsbewerbung",
+        "Mieterselbstauskunft"
+      ],
+      "status": "beobachten"
+    },
+    "D3": {
+      "label": "3D Interior",
+      "jobs": [
+        "3D Visualisierung Innenarchitektur"
+      ],
+      "trends": [
+        "KI Rendering"
+      ],
+      "status": "beobachten"
+    },
+    "MB": {
+      "label": "Möbelhersteller",
+      "jobs": [
+        "Produktdatenmanagement Möbel",
+        "3D Artist Möbel"
+      ],
+      "trends": [
+        "digitaler Produktpass"
+      ],
+      "status": "beobachten"
+    },
+    "GEO": {
+      "label": "GEO / KI-Sichtbarkeit",
+      "jobs": [
+        "Generative Engine Optimization",
+        "SEO Manager"
+      ],
+      "trends": [
+        "GEO Optimierung",
+        "ChatGPT Shopping"
+      ],
+      "status": "beobachten"
+    },
+    "K": {
+      "label": "Kunst",
+      "jobs": [
+        "Galerieassistenz"
+      ],
+      "trends": [
+        "Kunst verkaufen"
+      ],
+      "status": "pausiert"
+    },
+    "S": {
+      "label": "Steuerberatung",
+      "jobs": [
+        "Steuerfachangestellte"
+      ],
+      "trends": [
+        "Steuerberater finden"
+      ],
+      "status": "pausiert"
+    },
+    "UX": {
+      "label": "UX & Research",
+      "jobs": [
+        "UX Researcher",
+        "Usability Engineer"
+      ],
+      "trends": [
+        "Penpot"
+      ],
+      "status": "pausiert"
+    }
   }
 }

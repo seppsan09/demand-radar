@@ -194,18 +194,40 @@ def main() -> int:
             time.sleep(1)
 
     if not skip_trends:
+        week = date.fromisoformat(TODAY).isocalendar()[1]
+        queue = []
         for niche, c in cfg.items():
-            for term in c.get("trends", []):
-                try:
-                    values, source = fetch_trend(term, session)
-                    recent, baseline, ratio = summarize_series(values)
-                    trend_rows.append({"date": TODAY, "niche": niche, "term": term, "recent": recent,
-                                       "baseline": baseline, "ratio": ratio if ratio is not None else "",
-                                       "source": source, "status": "ok"})
-                except Exception as e:  # noqa: BLE001
-                    errors.append(f"Trends '{term}': {e}")
-                    trend_rows.append({"date": TODAY, "niche": niche, "term": term, "status": "fehler"})
-                time.sleep(8)
+            st = c.get("status", "beobachten")
+            if st == "pausiert":
+                continue
+            for i, term in enumerate(c.get("trends", [])):
+                # Fokus und Kandidaten jede Woche, beobachtete Nischen im Wechsel (gerade/ungerade Woche).
+                if st == "beobachten" and (i + len(niche)) % 2 != week % 2:
+                    continue
+                queue.append((niche, term))
+        pause = float(os.environ.get("TRENDS_PAUSE", "25"))
+        blocked = False
+        for niche, term in queue:
+            if blocked:
+                trend_rows.append({"date": TODAY, "niche": niche, "term": term, "status": "uebersprungen"})
+                continue
+            try:
+                values, source = fetch_trend(term, session)
+                recent, baseline, ratio = summarize_series(values)
+                # Null nach deutlichem Interesse ist fast immer ein Abrufproblem, kein echter Einbruch.
+                status = "verdaechtig" if recent == 0 and baseline >= 10 else "ok"
+                trend_rows.append({"date": TODAY, "niche": niche, "term": term, "recent": recent,
+                                   "baseline": baseline, "ratio": ratio if ratio is not None else "",
+                                   "source": source, "status": status})
+            except Exception as e:  # noqa: BLE001
+                msg = str(e).splitlines()[0][:200]
+                errors.append(f"Trends '{term}': {msg}")
+                trend_rows.append({"date": TODAY, "niche": niche, "term": term, "status": "fehler"})
+                # Bei einer Sperre durch Google den Rest auslassen statt weiter anzufragen.
+                if "429" in msg or "blocking" in msg.lower() or "unusual traffic" in msg.lower():
+                    blocked = True
+                    errors.append("Trends: Sperre durch Google, restliche Begriffe dieser Woche übersprungen")
+            time.sleep(pause)
 
     # Heutige Zeilen nicht doppelt schreiben, falls der Lauf wiederholt wird.
     if any(r["date"] == TODAY for r in jobs_hist) or any(r["date"] == TODAY for r in trends_hist):
@@ -224,6 +246,7 @@ def main() -> int:
                   "change_pct": pct_change(float(r["count"]), last_value(jobs_hist, r["niche"], r["term"], "count"))}
                  for r in job_rows],
         "trends": [r for r in trend_rows if r.get("status") == "ok"],
+        "trends_status": {k: sum(1 for r in trend_rows if r.get("status") == k) for k in ("ok", "verdaechtig", "fehler", "uebersprungen")},
         "fehler": errors,
         "jobsuche_endpunkt": DEBUG.get("endpunkt"),
     }

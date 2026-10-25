@@ -16,6 +16,8 @@ Die Jobsuche hat keine offizielle, dokumentierte Schnittstelle. Genutzt wird der
 - `baseline`: Mittel der acht Wochen davor
 - `ratio`: `recent / baseline`. Werte über 1,3 oder unter 0,7 gelten als auffällig.
 
+Abgefragt werden pro Woche die Begriffe aller Fokus- und Kandidaten-Nischen sowie im Wechsel die Hälfte der beobachteten Nischen; pausierte Nischen gar nicht (siehe `status` in `config.json`). Zwischen den Anfragen liegen 25 Sekunden. Sperrt Google, werden die restlichen Begriffe der Woche übersprungen. Ein Wert von 0 nach deutlichem Interesse wird als `verdaechtig` markiert und nicht ausgewertet.
+
 Quelle ist standardmäßig die Bibliothek `trendspyg`, die die Google-Trends-Seite über einen Browser abfragt. Das ist langsam und kann von Google gebremst werden. Ist im Repository das Geheimnis `SERPAPI_KEY` hinterlegt, wird stattdessen SerpApi genutzt (kostenpflichtig, stabiler).
 
 ## Dateien
