@@ -32,6 +32,8 @@ BA_URLS = [
 ]
 BA_HEADERS = {"X-API-Key": "jobboerse-jobsuche", "User-Agent": "demand-radar/1.0"}
 
+DEBUG: dict = {}
+
 JOBS_FIELDS = ["date", "niche", "term", "count", "sample", "median_age_days", "share_older_60d", "top_employers"]
 TRENDS_FIELDS = ["date", "niche", "term", "recent", "baseline", "ratio", "source", "status"]
 
@@ -115,7 +117,11 @@ def fetch_jobs(term: str, session: requests.Session) -> dict:
         try:
             r = session.get(url, params=params, headers=BA_HEADERS, timeout=30)
             if r.status_code == 200:
-                return parse_jobs(r.json())
+                payload = r.json()
+                if not DEBUG:
+                    DEBUG.update({"url": url, "keys": sorted(payload.keys()),
+                                  "first_ad_keys": sorted((payload.get("stellenangebote") or [{}])[0].keys())})
+                return parse_jobs(payload)
             last_err = f"HTTP {r.status_code}"
         except requests.RequestException as e:
             last_err = str(e)
@@ -218,6 +224,7 @@ def main() -> int:
                  for r in job_rows],
         "trends": [r for r in trend_rows if r.get("status") == "ok"],
         "fehler": errors,
+        "debug_jobsuche": DEBUG,
     }
     (DATA / "latest.json").write_text(json.dumps(latest, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"{len(job_rows)} Jobbegriffe, {len(latest['trends'])} Trendbegriffe, {len(errors)} Fehler")
