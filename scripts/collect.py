@@ -27,8 +27,8 @@ DATA = ROOT / "data"
 TODAY = os.environ.get("RUN_DATE") or date.today().isoformat()
 
 BA_URLS = [
-    "https://rest.arbeitsagentur.de/jobboerse/jobsuche-service/pc/v4/jobs",
     "https://rest.arbeitsagentur.de/jobboerse/jobsuche-service/pc/v6/jobs",
+    "https://rest.arbeitsagentur.de/jobboerse/jobsuche-service/pc/v4/jobs",
 ]
 BA_HEADERS = {"X-API-Key": "jobboerse-jobsuche", "User-Agent": "demand-radar/1.0"}
 
@@ -77,7 +77,7 @@ def pct_change(new, old):
 # ---------- Stellenanzeigen ----------
 
 def age_days(ad: dict) -> int | None:
-    for key in ("aktuelleVeroeffentlichungsdatum", "veroeffentlichungsdatum", "ersteVeroeffentlichungsdatum", "veroeffentlichtAm", "modifikationsTimestamp", "aenderungsdatum"):
+    for key in ("datumErsteVeroeffentlichung", "ersteVeroeffentlichungsdatum", "aktuelleVeroeffentlichungsdatum", "aenderungsdatum", "modifikationsTimestamp"):
         v = ad.get(key)
         if v:
             try:
@@ -97,7 +97,7 @@ def parse_jobs(payload: dict) -> dict:
     ages = [a for a in (age_days(ad) for ad in ads) if a is not None and a >= 0]
     employers: dict[str, int] = {}
     for ad in ads:
-        emp = ad.get("arbeitgeber") or ad.get("arbeitgeberName") or ""
+        emp = ad.get("firma") or ad.get("arbeitgeber") or ""
         if isinstance(emp, dict):
             emp = emp.get("name") or emp.get("anzeigeName") or ""
         name = str(emp).strip()
@@ -121,9 +121,7 @@ def fetch_jobs(term: str, session: requests.Session) -> dict:
             r = session.get(url, params=params, headers=BA_HEADERS, timeout=30)
             if r.status_code == 200:
                 payload = r.json()
-                if not DEBUG:
-                    DEBUG.update({"url": url, "keys": sorted(payload.keys()),
-                                  "first_ad": (payload.get("stellenangebote") or payload.get("ergebnisliste") or [{}])[0]})
+                DEBUG.setdefault("endpunkt", url)
                 return parse_jobs(payload)
             last_err = f"HTTP {r.status_code}"
         except requests.RequestException as e:
@@ -227,7 +225,7 @@ def main() -> int:
                  for r in job_rows],
         "trends": [r for r in trend_rows if r.get("status") == "ok"],
         "fehler": errors,
-        "debug_jobsuche": DEBUG,
+        "jobsuche_endpunkt": DEBUG.get("endpunkt"),
     }
     (DATA / "latest.json").write_text(json.dumps(latest, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"{len(job_rows)} Jobbegriffe, {len(latest['trends'])} Trendbegriffe, {len(errors)} Fehler")
