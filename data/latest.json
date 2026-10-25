@@ -460,5 +460,16 @@
     }
   ],
   "trends": [],
-  "fehler": []
+  "fehler": [],
+  "debug_jobsuche": {
+    "url": "https://rest.arbeitsagentur.de/jobboerse/jobsuche-service/pc/v6/jobs",
+    "keys": [
+      "ergebnisliste",
+      "facetten",
+      "maxErgebnisse",
+      "page",
+      "size"
+    ],
+    "first_ad_keys": []
+  }
 }
