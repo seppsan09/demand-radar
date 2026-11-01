@@ -19,3 +19,23 @@ date,niche,term,recent,baseline,ratio,source,status
 2026-10-25,EA,Dienstwagen laden zuhause,,,,,uebersprungen
 2026-10-25,WS,Mieterselbstauskunft,,,,,uebersprungen
 2026-10-25,GEO,GEO Optimierung,,,,,uebersprungen
+2026-11-01,KI,KI Richtlinie,29.0,66.6,0.44,trendspyg,ok
+2026-11-01,KI,Schatten KI,0.0,40.8,0.0,trendspyg,verdaechtig
+2026-11-01,KI,Vibe Coding,39.0,44.1,0.88,trendspyg,ok
+2026-11-01,V,Kurtaxe,24.0,28.0,0.86,trendspyg,ok
+2026-11-01,V,Ferienwohnung Steuer,3.5,2.8,1.27,trendspyg,ok
+2026-11-01,R,Pflegekräfte Ausland,0.0,34.5,0.0,trendspyg,verdaechtig
+2026-11-01,A,BFSG,,,,,fehler
+2026-11-01,A,Barrierefreiheit Website,,,,,uebersprungen
+2026-11-01,WEG,WEG Verwaltung,,,,,uebersprungen
+2026-11-01,WEG,Hausverwaltung wechseln,,,,,uebersprungen
+2026-11-01,E,Energieberater,,,,,uebersprungen
+2026-11-01,E,Wärmepumpe Angebot,,,,,uebersprungen
+2026-11-01,P,Pflegeplatz,,,,,uebersprungen
+2026-11-01,I,Teilungserklärung,,,,,uebersprungen
+2026-11-01,PV,Balkonkraftwerk anmelden,,,,,uebersprungen
+2026-11-01,EA,Wallbox WEG,,,,,uebersprungen
+2026-11-01,WS,Wohnungsbewerbung,,,,,uebersprungen
+2026-11-01,D3,KI Rendering,,,,,uebersprungen
+2026-11-01,MB,digitaler Produktpass,,,,,uebersprungen
+2026-11-01,GEO,ChatGPT Shopping,,,,,uebersprungen
