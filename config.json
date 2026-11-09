@@ -152,13 +152,16 @@
       "status": "beobachten"
     },
     "WS": {
-      "label": "Wohnungssuche",
+      "label": "Mieterauswahl & Langzeitvermietung",
       "jobs": [
-        "Vermietung Sachbearbeiter"
+        "Vermietung Sachbearbeiter",
+        "Vermietung Wohnungswirtschaft",
+        "Immobilienkaufmann Vermietung"
       ],
       "trends": [
         "Wohnungsbewerbung",
-        "Mieterselbstauskunft"
+        "Mieterselbstauskunft",
+        "Mieterauswahl"
       ],
       "status": "beobachten"
     },
