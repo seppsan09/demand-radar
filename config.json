@@ -103,7 +103,7 @@
         "Pflegeheim finden",
         "Pflegeplatz"
       ],
-      "status": "beobachten"
+      "status": "fokus"
     },
     "I": {
       "label": "Immobilienkauf",
@@ -170,7 +170,7 @@
       "trends": [
         "KI Rendering"
       ],
-      "status": "beobachten"
+      "status": "fokus"
     },
     "MB": {
       "label": "Möbelhersteller",
