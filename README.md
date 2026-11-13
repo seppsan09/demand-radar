@@ -18,6 +18,12 @@ Die Jobsuche hat keine offizielle, dokumentierte Schnittstelle. Genutzt wird der
 
 Abgefragt werden pro Woche die Begriffe aller Fokus- und Kandidaten-Nischen sowie im Wechsel die Hälfte der beobachteten Nischen; pausierte Nischen gar nicht (siehe `status` in `config.json`). Zwischen den Anfragen liegen 25 Sekunden. Sperrt Google, werden die restlichen Begriffe der Woche übersprungen. Ein Wert von 0 nach deutlichem Interesse wird als `verdaechtig` markiert und nicht ausgewertet.
 
+**Verwandte Suchanfragen** zu jedem Trends-Begriff, im selben Aufruf mitgeliefert:
+- `rising`: Formulierungen, deren Interesse rund um den Begriff gerade wächst, mit Wachstumsrate oder `Breakout`
+- `top`: der stabile Kern der Anfragen zum Thema
+
+Gespeichert werden die zehn stärksten `rising`- und fünf stärksten `top`-Anfragen je Begriff. Sie zeigen, woran die Leute tatsächlich hängen, ohne dass man die Formulierung vorher erraten muss. In `latest.json` stehen sie unter `related_rising`, neue Anfragen zuerst; `neu` heißt, dass die Anfrage in keinem früheren Lauf vorkam. Über SerpApi gibt es sie nicht — dort stecken sie in einer zweiten, kostenpflichtigen Abfrage.
+
 Quelle ist standardmäßig die Bibliothek `trendspyg`, die die Google-Trends-Seite über einen Browser abfragt. Das ist langsam und kann von Google gebremst werden. Ist im Repository das Geheimnis `SERPAPI_KEY` hinterlegt, wird stattdessen SerpApi genutzt (kostenpflichtig, stabiler).
 
 ## Dateien
@@ -25,7 +31,7 @@ Quelle ist standardmäßig die Bibliothek `trendspyg`, die die Google-Trends-Sei
 - `config.json`: Begriffe pro Nische, frei änderbar
 - `scripts/collect.py`: Sammelskript
 - `.github/workflows/collect.yml`: Zeitplan (Sonntag 18:00 UTC) und manueller Start
-- `data/jobs_history.csv`, `data/trends_history.csv`: Verlauf
+- `data/jobs_history.csv`, `data/trends_history.csv`, `data/related_history.csv`: Verlauf
 - `data/latest.json`: letzter Lauf mit Veränderung gegenüber der Vorwoche und einer Fehlerliste
 
 ## Manuell starten

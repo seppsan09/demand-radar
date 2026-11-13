@@ -36,6 +36,11 @@ DEBUG: dict = {}
 
 JOBS_FIELDS = ["date", "niche", "term", "count", "sample", "median_age_days", "share_older_60d", "top_employers"]
 TRENDS_FIELDS = ["date", "niche", "term", "recent", "baseline", "ratio", "source", "status"]
+RELATED_FIELDS = ["date", "niche", "term", "related", "kind", "value", "formatted"]
+
+# Google liefert bis zu 25 verwandte Anfragen je Art. Gespeichert wird nur die Spitze:
+# "rising" zeigt, woran das Interesse gerade waechst, "top" den stabilen Kern.
+RELATED_LIMIT = {"rising": 10, "top": 5}
 
 
 # ---------- Hilfen ----------
@@ -159,17 +164,33 @@ def trends_serpapi(term: str, key: str, session: requests.Session) -> list[float
     return out
 
 
-def trends_trendspyg(term: str) -> list[float]:
-    from trendspyg import download_google_trends_interest_over_time  # type: ignore
-    series = download_google_trends_interest_over_time(term, geo="DE", timeframe="today 3-m")
-    return [float(p["value"]) for p in series]
+def trends_trendspyg(term: str) -> tuple[list[float], list[dict]]:
+    """Explore-Aufruf: Zeitreihe und verwandte Suchanfragen in einem Seitenaufruf.
+
+    Kostet nicht mehr als die reine Zeitreihe, liefert aber zusaetzlich die
+    Formulierungen, die um den Begriff herum wachsen.
+    """
+    from trendspyg import download_google_trends_explore  # type: ignore
+    env = download_google_trends_explore(term, geo="DE", timeframe="today 3-m", include_geo=False)
+    values = [float(p["value"]) for p in env.get("interest_over_time") or []]
+    related = []
+    for kind, limit in RELATED_LIMIT.items():
+        for q in ((env.get("related_queries") or {}).get(kind) or [])[:limit]:
+            query = (q.get("query") or "").strip()
+            if not query:
+                continue
+            related.append({"related": query, "kind": kind,
+                            "value": q.get("value", ""), "formatted": q.get("formatted_value", "")})
+    return values, related
 
 
-def fetch_trend(term: str, session: requests.Session) -> tuple[list[float], str]:
+def fetch_trend(term: str, session: requests.Session) -> tuple[list[float], list[dict], str]:
+    """Zeitreihe, verwandte Anfragen und Quelle. Ueber SerpApi gibt es keine
+    verwandten Anfragen: die stecken dort in einer zweiten, kostenpflichtigen Abfrage."""
     key = os.environ.get("SERPAPI_KEY")
     if key:
-        return trends_serpapi(term, key, session), "serpapi"
-    return trends_trendspyg(term), "trendspyg"
+        return trends_serpapi(term, key, session), [], "serpapi"
+    return (*trends_trendspyg(term), "trendspyg")
 
 
 # ---------- Lauf ----------
@@ -178,12 +199,14 @@ def main() -> int:
     cfg = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))["nischen"]
     DATA.mkdir(exist_ok=True)
     jobs_path, trends_path = DATA / "jobs_history.csv", DATA / "trends_history.csv"
+    related_path = DATA / "related_history.csv"
     jobs_hist, trends_hist = read_csv(jobs_path), read_csv(trends_path)
+    related_hist = read_csv(related_path)
     session = requests.Session()
     errors: list[str] = []
     skip_trends = os.environ.get("SKIP_TRENDS") == "1"
 
-    job_rows, trend_rows = [], []
+    job_rows, trend_rows, related_rows = [], [], []
     for niche, c in cfg.items():
         for term in c.get("jobs", []):
             try:
@@ -212,13 +235,15 @@ def main() -> int:
                 trend_rows.append({"date": TODAY, "niche": niche, "term": term, "status": "uebersprungen"})
                 continue
             try:
-                values, source = fetch_trend(term, session)
+                values, related, source = fetch_trend(term, session)
                 recent, baseline, ratio = summarize_series(values)
                 # Null nach deutlichem Interesse ist fast immer ein Abrufproblem, kein echter Einbruch.
                 status = "verdaechtig" if recent == 0 and baseline >= 10 else "ok"
                 trend_rows.append({"date": TODAY, "niche": niche, "term": term, "recent": recent,
                                    "baseline": baseline, "ratio": ratio if ratio is not None else "",
                                    "source": source, "status": status})
+                for q in related:
+                    related_rows.append({"date": TODAY, "niche": niche, "term": term, **q})
             except Exception as e:  # noqa: BLE001
                 msg = str(e).splitlines()[0][:200]
                 errors.append(f"Trends '{term}': {msg}")
@@ -230,28 +255,50 @@ def main() -> int:
             time.sleep(pause)
 
     # Heutige Zeilen nicht doppelt schreiben, falls der Lauf wiederholt wird.
-    if any(r["date"] == TODAY for r in jobs_hist) or any(r["date"] == TODAY for r in trends_hist):
+    if any(r["date"] == TODAY for r in jobs_hist + trends_hist + related_hist):
         jobs_hist = [r for r in jobs_hist if r["date"] != TODAY]
         trends_hist = [r for r in trends_hist if r["date"] != TODAY]
-        for p, fields, rows in ((jobs_path, JOBS_FIELDS, jobs_hist), (trends_path, TRENDS_FIELDS, trends_hist)):
-            p.unlink(missing_ok=True)
-            append_csv(p, fields, rows)
+        related_hist = [r for r in related_hist if r["date"] != TODAY]
+        for path, fields, rows in ((jobs_path, JOBS_FIELDS, jobs_hist),
+                                   (trends_path, TRENDS_FIELDS, trends_hist),
+                                   (related_path, RELATED_FIELDS, related_hist)):
+            path.unlink(missing_ok=True)
+            append_csv(path, fields, rows)
     append_csv(jobs_path, JOBS_FIELDS, job_rows)
     append_csv(trends_path, TRENDS_FIELDS, trend_rows)
+    if related_rows:
+        append_csv(related_path, RELATED_FIELDS, related_rows)
+
+    # Verwandte Anfragen fuer latest.json: wachsende Formulierungen, neue zuerst.
+    bekannt = {(r["niche"], r["term"], r["related"]) for r in related_hist if r["date"] < TODAY}
+
+    def rising_value(r) -> float:
+        try:
+            return float(r["value"])
+        except (TypeError, ValueError):
+            return 0.0
+
+    rising = [{"niche": r["niche"], "term": r["term"], "related": r["related"],
+               "wachstum": r["formatted"],
+               "neu": (r["niche"], r["term"], r["related"]) not in bekannt}
+              for r in related_rows if r["kind"] == "rising"]
+    rising.sort(key=lambda r: (not r["neu"], r["term"]))
 
     latest = {
         "date": TODAY,
-        "hinweis": "count = Treffer in der Jobsuche der Bundesagentur; median_age_days und share_older_60d aus einer Stichprobe der ersten 100 Anzeigen. Trends: recent = Mittel der letzten 2 vollen Wochen, baseline = 8 Wochen davor, ratio = recent/baseline (Werte relativ, 0–100 je Begriff).",
+        "hinweis": "count = Treffer in der Jobsuche der Bundesagentur; median_age_days und share_older_60d aus einer Stichprobe der ersten 100 Anzeigen. Trends: recent = Mittel der letzten 2 vollen Wochen, baseline = 8 Wochen davor, ratio = recent/baseline (Werte relativ, 0–100 je Begriff). related_rising = Suchanfragen, die rund um einen Begriff wachsen; 'neu' heisst, dass die Anfrage in keinem frueheren Lauf auftauchte.",
         "jobs": [{**r, "prev_count": last_value(jobs_hist, r["niche"], r["term"], "count"),
                   "change_pct": pct_change(float(r["count"]), last_value(jobs_hist, r["niche"], r["term"], "count"))}
                  for r in job_rows],
         "trends": [r for r in trend_rows if r.get("status") == "ok"],
         "trends_status": {k: sum(1 for r in trend_rows if r.get("status") == k) for k in ("ok", "verdaechtig", "fehler", "uebersprungen")},
+        "related_rising": rising[:60],
         "fehler": errors,
         "jobsuche_endpunkt": DEBUG.get("endpunkt"),
     }
     (DATA / "latest.json").write_text(json.dumps(latest, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"{len(job_rows)} Jobbegriffe, {len(latest['trends'])} Trendbegriffe, {len(errors)} Fehler")
+    print(f"{len(job_rows)} Jobbegriffe, {len(latest['trends'])} Trendbegriffe, "
+          f"{len(related_rows)} verwandte Anfragen ({sum(1 for r in rising if r['neu'])} neu), {len(errors)} Fehler")
     for e in errors:
         print("  -", e)
     # Nur scheitern, wenn gar nichts ankam.
