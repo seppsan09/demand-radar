@@ -1,6 +1,113 @@
 {
   "_hinweis": "Begriffe pro Nische. 'jobs' wird in der Jobsuche der Bundesagentur gesucht (jede Woche, alle Nischen), 'trends' in Google Trends (Deutschland). status wie im Bedarfsradar: fokus und kandidat jede Woche, beobachten im Zweiwochenwechsel, pausiert ohne Trends.",
   "nischen": {
+    "AP": {
+      "label": "Ambulante Pflegedienste",
+      "jobs": [
+        "Pflegedienstleitung ambulant",
+        "Abrechnung Pflegedienst",
+        "Disposition Pflegedienst",
+        "Fuhrparkmanagement Pflege"
+      ],
+      "trends": [
+        "Abrechnung Pflegedienst",
+        "Telematikinfrastruktur Pflege",
+        "Tourenplanung Pflegedienst"
+      ],
+      "status": "kandidat"
+    },
+    "BW": {
+      "label": "Betreutes Wohnen (Anbieter)",
+      "jobs": [
+        "Einrichtungsleitung Betreutes Wohnen",
+        "Servicewohnen",
+        "Betreuungskraft Senioren"
+      ],
+      "trends": [
+        "Betreutes Wohnen Anbieter",
+        "Servicewohnen"
+      ],
+      "status": "kandidat"
+    },
+    "BF": {
+      "label": "Betreutes Wohnen (Familien)",
+      "jobs": [
+        "Pflegeberatung",
+        "Seniorenberatung",
+        "Seniorenbetreuung"
+      ],
+      "trends": [
+        "Betreutes Wohnen Kosten",
+        "Betreutes Wohnen finden",
+        "Seniorenwohnung mieten"
+      ],
+      "status": "kandidat"
+    },
+    "PA": {
+      "label": "Pflegepersonal: Ausbildung & Karriere",
+      "jobs": [
+        "Pflegefachkraft Ausbildung",
+        "Praxisanleiter Pflege",
+        "Pflegehelfer",
+        "Weiterbildung Pflege"
+      ],
+      "trends": [
+        "Pflegefachkraft Gehalt",
+        "Ausbildung Pflegefachkraft",
+        "Quereinstieg Pflege"
+      ],
+      "status": "kandidat"
+    },
+    "AW": {
+      "label": "Architektur & Wettbewerbe",
+      "jobs": [
+        "Architekt Projektleitung",
+        "Landschaftsarchitekt",
+        "Stadtplaner",
+        "Vergabemanagement Bau"
+      ],
+      "trends": [
+        "Architektenwettbewerb",
+        "VgV Verfahren",
+        "Ausschreibung Architektur"
+      ],
+      "status": "kandidat"
+    },
+    "FM": {
+      "label": "Fördermittel & Anträge",
+      "jobs": [
+        "Fördermittelmanagement",
+        "Fördermittelberatung",
+        "Zuwendungsrecht"
+      ],
+      "trends": [
+        "Fördermittel beantragen",
+        "BAFA Antrag",
+        "KfW Förderung Antrag"
+      ],
+      "status": "kandidat"
+    },
+    "SP": {
+      "label": "Stationäre Pflegeheime (Betreiber)",
+      "jobs": [
+        "Heimleitung",
+        "Pflegedienstleitung stationär",
+        "Wohnbereichsleitung",
+        "Belegungsmanagement Pflege",
+        "Regionalleitung Pflege",
+        "Technisches Gebäudemanagement Pflege",
+        "Technischer Leiter Pflege"
+      ],
+      "trends": [
+        "Pflegeschlüssel",
+        "Heimaufsicht",
+        "Pflegeheim Insolvenz",
+        "Eigenanteil Pflegeheim",
+        "Pflegeimmobilie",
+        "barrierefreies Bauen"
+      ],
+      "status": "kandidat"
+    },
     "KI": {
       "label": "KI & Software im Betrieb",
       "jobs": [
