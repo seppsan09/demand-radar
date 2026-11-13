@@ -1,6 +1,25 @@
 {
   "_hinweis": "Begriffe pro Nische. 'jobs' wird in der Jobsuche der Bundesagentur gesucht (jede Woche, alle Nischen), 'trends' in Google Trends (Deutschland). status wie im Bedarfsradar: fokus und kandidat jede Woche, beobachten im Zweiwochenwechsel, pausiert ohne Trends.",
   "nischen": {
+    "SB": {
+      "label": "Steuererklärung & Buchhaltung in Eigenregie",
+      "jobs": [
+        "Kontierung",
+        "Belegerfassung",
+        "Buchhaltung Digitalisierung",
+        "Buchhaltung Automatisierung",
+        "Umsatzsteuer"
+      ],
+      "trends": [
+        "Umsatzsteuervoranmeldung",
+        "Kleinunternehmerregelung",
+        "Zusammenfassende Meldung",
+        "Umsatzsteuererklärung",
+        "Einkommensteuererklärung",
+        "Buchhaltung Excel"
+      ],
+      "status": "kandidat"
+    },
     "AP": {
       "label": "Ambulante Pflegedienste",
       "jobs": [
