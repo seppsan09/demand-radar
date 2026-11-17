@@ -38,6 +38,10 @@ jobs:
           # Verwandte Suchanfragen ueber SerpApi kosten eine zweite Abfrage je
           # Begriff. Zum Einschalten die Repository-Variable auf 1 setzen.
           SERPAPI_RELATED: ${{ vars.SERPAPI_RELATED }}
+          # Pause zwischen den Trends-Begriffen in Sekunden. Leer = 25 ueber den
+          # Browserweg, 1 mit SerpApi-Schluessel. Hochsetzen, wenn der Tarif eine
+          # niedrige Durchsatzgrenze hat (kostenloser Tarif: 50 Abfragen/Stunde).
+          TRENDS_PAUSE: ${{ vars.TRENDS_PAUSE }}
           # Stundendurchsatz des SerpApi-Tarifs; ohne Angabe wird der
           # kostenlose Tarif mit 50 angenommen.
           SERPAPI_THROUGHPUT: ${{ vars.SERPAPI_THROUGHPUT }}

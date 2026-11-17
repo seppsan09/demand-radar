@@ -44,6 +44,12 @@ Schlüssel hinterlegen:
 gh secret set SERPAPI_KEY
 ```
 
+Der kostenlose Tarif umfasst 250 Abfragen im Monat bei einer Durchsatzgrenze von 50 pro Stunde. Die Begriffe pro Woche sind darauf ausgelegt: rund 40, also höchstens 215 in einem Monat mit fünf Sonntagen. Ein manuell gestarteter Lauf zählt mit. Reicht der Durchsatz nicht, lässt sich die Pause hochsetzen — bei 75 Sekunden bleibt der Lauf unter 50 Abfragen pro Stunde und dauert gut eine Stunde:
+
+```bash
+gh variable set TRENDS_PAUSE --body 75
+```
+
 Verwandte Suchanfragen sind über SerpApi eine **zweite** Abfrage je Begriff und verdoppeln damit den Verbrauch. Sie sind deshalb abgeschaltet, bis die Repository-Variable `SERPAPI_RELATED` auf `1` steht:
 
 ```bash

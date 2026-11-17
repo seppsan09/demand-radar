@@ -1,5 +1,5 @@
 {
-  "_hinweis": "Begriffe pro Nische. 'jobs' wird in der Jobsuche der Bundesagentur gesucht (jede Woche, alle Nischen), 'trends' in Google Trends (Deutschland). status wie im Bedarfsradar: fokus und kandidat jede Woche, beobachten im Zweiwochenwechsel, pausiert ohne Trends.",
+  "_hinweis": "Begriffe pro Nische. 'jobs' wird in der Jobsuche der Bundesagentur gesucht (jede Woche, alle Nischen), 'trends' in Google Trends (Deutschland). status wie im Bedarfsradar: fokus und kandidat jede Woche, beobachten im Zweiwochenwechsel, pausiert ohne Trends. Die Zahl der Trends-Begriffe pro Woche ist auf das SerpApi-Kontingent ausgelegt: rund 40, damit auch ein Monat mit fuenf Sonntagen unter 250 Abfragen bleibt.",
   "nischen": {
     "SB": {
       "label": "Steuererklärung & Buchhaltung in Eigenregie",
@@ -33,7 +33,7 @@
         "Telematikinfrastruktur Pflege",
         "Tourenplanung Pflegedienst"
       ],
-      "status": "kandidat"
+      "status": "beobachten"
     },
     "BW": {
       "label": "Betreutes Wohnen (Anbieter)",
@@ -46,7 +46,7 @@
         "Betreutes Wohnen Anbieter",
         "Servicewohnen"
       ],
-      "status": "kandidat"
+      "status": "beobachten"
     },
     "BF": {
       "label": "Betreutes Wohnen (Familien)",
@@ -60,7 +60,7 @@
         "Betreutes Wohnen finden",
         "Seniorenwohnung mieten"
       ],
-      "status": "kandidat"
+      "status": "beobachten"
     },
     "PA": {
       "label": "Pflegepersonal: Ausbildung & Karriere",
@@ -90,7 +90,7 @@
         "VgV Verfahren",
         "Ausschreibung Architektur"
       ],
-      "status": "kandidat"
+      "status": "beobachten"
     },
     "FM": {
       "label": "Fördermittel & Anträge",
@@ -125,7 +125,7 @@
         "Pflegeimmobilie",
         "barrierefreies Bauen"
       ],
-      "status": "kandidat"
+      "status": "beobachten"
     },
     "KI": {
       "label": "KI & Software im Betrieb",
@@ -189,7 +189,7 @@
         "WEG Verwaltung",
         "Hausverwaltung wechseln"
       ],
-      "status": "kandidat"
+      "status": "beobachten"
     },
     "E": {
       "label": "Heizung & Sanierung",
