@@ -24,7 +24,23 @@ Abgefragt werden pro Woche die Begriffe aller Fokus- und Kandidaten-Nischen sowi
 
 Gespeichert werden die zehn stärksten `rising`- und fünf stärksten `top`-Anfragen je Begriff. Sie zeigen, woran die Leute tatsächlich hängen, ohne dass man die Formulierung vorher erraten muss. In `latest.json` stehen sie unter `related_rising`, neue Anfragen zuerst; `neu` heißt, dass die Anfrage in keinem früheren Lauf vorkam. Über SerpApi gibt es sie nicht — dort stecken sie in einer zweiten, kostenpflichtigen Abfrage.
 
-Quelle ist standardmäßig die Bibliothek `trendspyg`, die die Google-Trends-Seite über einen Browser abfragt. Das ist langsam und kann von Google gebremst werden. Ist im Repository das Geheimnis `SERPAPI_KEY` hinterlegt, wird stattdessen SerpApi genutzt (kostenpflichtig, stabiler).
+## Quelle der Trends-Daten
+
+Ohne hinterlegten Schlüssel nutzt das Skript die Bibliothek `trendspyg`, die die Google-Trends-Seite über einen Browser abfragt. Von den Adressen der GitHub-Rechner sperrt Google diesen Weg nach wenigen Begriffen (HTTP 429, „unusual traffic"); der Rest der Woche wird dann übersprungen. In den Läufen von Oktober und November 2026 kamen so nur vier bis acht Begriffe pro Woche durch.
+
+Ist das Geheimnis `SERPAPI_KEY` hinterlegt, läuft die Abfrage stattdessen über SerpApi — eine normale Schnittstelle ohne Browser, die nicht gesperrt wird. Dieser Weg ist kostenpflichtig, jede erfolgreiche Abfrage zählt im Tarif. Die Pause zwischen den Begriffen sinkt dabei von 25 Sekunden auf eine; `TRENDS_PAUSE` überschreibt das.
+
+Schlüssel hinterlegen:
+
+```bash
+gh secret set SERPAPI_KEY
+```
+
+Verwandte Suchanfragen sind über SerpApi eine **zweite** Abfrage je Begriff und verdoppeln damit den Verbrauch. Sie sind deshalb abgeschaltet, bis die Repository-Variable `SERPAPI_RELATED` auf `1` steht:
+
+```bash
+gh variable set SERPAPI_RELATED --body 1
+```
 
 ## Dateien
 

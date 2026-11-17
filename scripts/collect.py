@@ -150,18 +150,42 @@ def summarize_series(values: list[float]) -> tuple[float, float, float | None]:
     return round(recent, 1), round(baseline, 1), ratio
 
 
-def trends_serpapi(term: str, key: str, session: requests.Session) -> list[float]:
+def serpapi_get(data_type: str, term: str, key: str, session: requests.Session) -> dict:
+    """Eine Abfrage an SerpApi. Jede erfolgreiche Abfrage zaehlt im Tarif."""
     r = session.get("https://serpapi.com/search.json", params={
         "engine": "google_trends", "q": term, "geo": "DE", "date": "today 3-m",
-        "data_type": "TIMESERIES", "api_key": key,
+        "hl": "de", "data_type": data_type, "api_key": key,
     }, timeout=60)
     r.raise_for_status()
-    timeline = (r.json().get("interest_over_time") or {}).get("timeline_data") or []
+    body = r.json()
+    # SerpApi meldet Kontingent- und Parameterfehler mit HTTP 200 im Feld "error".
+    if body.get("error"):
+        raise RuntimeError(str(body["error"])[:200])
+    return body
+
+
+def trends_serpapi(term: str, key: str, session: requests.Session) -> list[float]:
+    timeline = (serpapi_get("TIMESERIES", term, key, session).get("interest_over_time") or {}).get("timeline_data") or []
     out = []
-    for p in timeline:
-        vals = p.get("values") or [{}]
+    for point in timeline:
+        vals = point.get("values") or [{}]
         out.append(float(vals[0].get("extracted_value", 0)))
     return out
+
+
+def related_serpapi(term: str, key: str, session: requests.Session) -> list[dict]:
+    """Verwandte Anfragen. Zweite, eigene Abfrage: verdoppelt den Verbrauch,
+    darum nur mit SERPAPI_RELATED=1."""
+    blocks = serpapi_get("RELATED_QUERIES", term, key, session).get("related_queries") or {}
+    related = []
+    for kind, limit in RELATED_LIMIT.items():
+        for q in (blocks.get(kind) or [])[:limit]:
+            query = (q.get("query") or "").strip()
+            if not query:
+                continue
+            related.append({"related": query, "kind": kind,
+                            "value": q.get("extracted_value", ""), "formatted": q.get("value", "")})
+    return related
 
 
 def trends_trendspyg(term: str) -> tuple[list[float], list[dict]]:
@@ -185,11 +209,16 @@ def trends_trendspyg(term: str) -> tuple[list[float], list[dict]]:
 
 
 def fetch_trend(term: str, session: requests.Session) -> tuple[list[float], list[dict], str]:
-    """Zeitreihe, verwandte Anfragen und Quelle. Ueber SerpApi gibt es keine
-    verwandten Anfragen: die stecken dort in einer zweiten, kostenpflichtigen Abfrage."""
+    """Zeitreihe, verwandte Anfragen und Quelle.
+
+    Ueber SerpApi kosten die verwandten Anfragen eine zweite Abfrage je Begriff,
+    also den doppelten Verbrauch. Darum nur mit SERPAPI_RELATED=1.
+    """
     key = os.environ.get("SERPAPI_KEY")
     if key:
-        return trends_serpapi(term, key, session), [], "serpapi"
+        values = trends_serpapi(term, key, session)
+        related = related_serpapi(term, key, session) if os.environ.get("SERPAPI_RELATED") == "1" else []
+        return values, related, "serpapi"
     return (*trends_trendspyg(term), "trendspyg")
 
 
@@ -228,7 +257,9 @@ def main() -> int:
                 if st == "beobachten" and (i + len(niche)) % 2 != week % 2:
                     continue
                 queue.append((niche, term))
-        pause = float(os.environ.get("TRENDS_PAUSE", "25"))
+        # Ueber SerpApi ist keine Hoeflichkeitspause noetig, der Browserweg braucht sie.
+        serpapi = bool(os.environ.get("SERPAPI_KEY"))
+        pause = float(os.environ.get("TRENDS_PAUSE") or (1 if serpapi else 25))
         blocked = False
         for niche, term in queue:
             if blocked:
@@ -249,10 +280,22 @@ def main() -> int:
                 errors.append(f"Trends '{term}': {msg}")
                 trend_rows.append({"date": TODAY, "niche": niche, "term": term, "status": "fehler"})
                 # Bei einer Sperre durch Google den Rest auslassen statt weiter anzufragen.
-                if "429" in msg or "blocking" in msg.lower() or "unusual traffic" in msg.lower():
+                low = msg.lower()
+                if "429" in msg or "blocking" in low or "unusual traffic" in low:
                     blocked = True
                     errors.append("Trends: Sperre durch Google, restliche Begriffe dieser Woche übersprungen")
+                elif any(w in low for w in ("run out of searches", "exhaust", "invalid api key", "unauthorized")):
+                    blocked = True
+                    errors.append(f"Trends: SerpApi verweigert weitere Abfragen ({msg}), restliche Begriffe übersprungen")
             time.sleep(pause)
+
+    if trend_rows and not related_rows:
+        ok_quellen = {r.get("source") for r in trend_rows if r.get("status") == "ok"}
+        erwartet = "trendspyg" in ok_quellen or (
+            "serpapi" in ok_quellen and os.environ.get("SERPAPI_RELATED") == "1")
+        if erwartet:
+            errors.append("Trends: keine verwandten Suchanfragen geliefert "
+                          "(bei trendspyg oft Folge der Bremse durch Google)")
 
     # Heutige Zeilen nicht doppelt schreiben, falls der Lauf wiederholt wird.
     if any(r["date"] == TODAY for r in jobs_hist + trends_hist + related_hist):

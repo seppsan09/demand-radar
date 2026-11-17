@@ -35,6 +35,9 @@ jobs:
       - name: Daten sammeln
         env:
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+          # Verwandte Suchanfragen ueber SerpApi kosten eine zweite Abfrage je
+          # Begriff. Zum Einschalten die Repository-Variable auf 1 setzen.
+          SERPAPI_RELATED: ${{ vars.SERPAPI_RELATED }}
           SKIP_TRENDS: ${{ inputs.skip_trends && '1' || '0' }}
         run: python scripts/collect.py
 
