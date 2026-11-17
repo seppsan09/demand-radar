@@ -257,9 +257,22 @@ def main() -> int:
                 if st == "beobachten" and (i + len(niche)) % 2 != week % 2:
                     continue
                 queue.append((niche, term))
-        # Ueber SerpApi ist keine Hoeflichkeitspause noetig, der Browserweg braucht sie.
-        serpapi = bool(os.environ.get("SERPAPI_KEY"))
-        pause = float(os.environ.get("TRENDS_PAUSE") or (1 if serpapi else 25))
+        # Der Browserweg braucht eine Hoeflichkeitspause. Bei SerpApi richtet sie
+        # sich nach dem Stundendurchsatz des Tarifs (SERPAPI_THROUGHPUT; Free 50,
+        # Starter 200, Developer 1000) - sonst laufen die Abfragen in das
+        # Stundenlimit. Mit verwandten Anfragen kostet ein Begriff zwei Abfragen.
+        if os.environ.get("SERPAPI_KEY"):
+            je_begriff = 2 if os.environ.get("SERPAPI_RELATED") == "1" else 1
+            durchsatz = float(os.environ.get("SERPAPI_THROUGHPUT") or 50)
+            standard = round(3600 * je_begriff / durchsatz * 1.05, 1) if durchsatz > 0 else 1.0
+        else:
+            standard = 25.0
+        pause = float(os.environ.get("TRENDS_PAUSE") or standard)
+        dauer = len(queue) * pause / 60
+        print(f"{len(queue)} Trendbegriffe, {pause:g} s Pause, ueberschlagen {dauer:.0f} min")
+        if dauer > 150:
+            errors.append(f"Trends: geplante Laufzeit {dauer:.0f} min liegt nahe am "
+                          "Zeitlimit des Workflows (170 min)")
         blocked = False
         for niche, term in queue:
             if blocked:

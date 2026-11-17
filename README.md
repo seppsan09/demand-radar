@@ -28,7 +28,15 @@ Gespeichert werden die zehn stärksten `rising`- und fünf stärksten `top`-Anfr
 
 Ohne hinterlegten Schlüssel nutzt das Skript die Bibliothek `trendspyg`, die die Google-Trends-Seite über einen Browser abfragt. Von den Adressen der GitHub-Rechner sperrt Google diesen Weg nach wenigen Begriffen (HTTP 429, „unusual traffic"); der Rest der Woche wird dann übersprungen. In den Läufen von Oktober und November 2026 kamen so nur vier bis acht Begriffe pro Woche durch.
 
-Ist das Geheimnis `SERPAPI_KEY` hinterlegt, läuft die Abfrage stattdessen über SerpApi — eine normale Schnittstelle ohne Browser, die nicht gesperrt wird. Dieser Weg ist kostenpflichtig, jede erfolgreiche Abfrage zählt im Tarif. Die Pause zwischen den Begriffen sinkt dabei von 25 Sekunden auf eine; `TRENDS_PAUSE` überschreibt das.
+Ist das Geheimnis `SERPAPI_KEY` hinterlegt, läuft die Abfrage stattdessen über SerpApi — eine normale Schnittstelle ohne Browser, die nicht gesperrt wird. Jede erfolgreiche Abfrage zählt im Tarif; fehlgeschlagene zählen nicht.
+
+Jeder Tarif hat neben dem Monatskontingent einen **Stundendurchsatz** (kostenlos 50, Starter 200, Developer 1000). Die Pause zwischen den Begriffen wird daraus berechnet, damit der Lauf nicht dagegen stößt. Ohne Angabe wird der kostenlose Tarif angenommen, also 50 pro Stunde und rund 76 Sekunden Pause. Bei einem anderen Tarif:
+
+```bash
+gh variable set SERPAPI_THROUGHPUT --body 200
+```
+
+`TRENDS_PAUSE` überschreibt die Rechnung, wenn du die Pause selbst setzen willst. Die überschlagene Laufzeit steht am Anfang der Trends-Phase im Protokoll; wird sie zu lang für das Zeitlimit des Workflows, steht ein Hinweis in `latest.json`.
 
 Schlüssel hinterlegen:
 

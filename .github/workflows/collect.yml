@@ -21,7 +21,7 @@ concurrency:
 jobs:
   collect:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 170
     steps:
       - uses: actions/checkout@v4
 
@@ -38,6 +38,9 @@ jobs:
           # Verwandte Suchanfragen ueber SerpApi kosten eine zweite Abfrage je
           # Begriff. Zum Einschalten die Repository-Variable auf 1 setzen.
           SERPAPI_RELATED: ${{ vars.SERPAPI_RELATED }}
+          # Stundendurchsatz des SerpApi-Tarifs; ohne Angabe wird der
+          # kostenlose Tarif mit 50 angenommen.
+          SERPAPI_THROUGHPUT: ${{ vars.SERPAPI_THROUGHPUT }}
           SKIP_TRENDS: ${{ inputs.skip_trends && '1' || '0' }}
         run: python scripts/collect.py
 
