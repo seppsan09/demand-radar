@@ -35,7 +35,7 @@ BA_HEADERS = {"X-API-Key": "jobboerse-jobsuche", "User-Agent": "demand-radar/1.0
 DEBUG: dict = {}
 
 JOBS_FIELDS = ["date", "niche", "term", "count", "sample", "median_age_days", "share_older_60d", "top_employers"]
-TRENDS_FIELDS = ["date", "niche", "term", "recent", "baseline", "ratio", "source", "status"]
+TRENDS_FIELDS = ["date", "niche", "term", "recent", "baseline", "ratio", "punkte", "raster", "source", "status"]
 RELATED_FIELDS = ["date", "niche", "term", "related", "kind", "value", "formatted"]
 
 # Google liefert bis zu 25 verwandte Anfragen je Art. Gespeichert wird nur die Spitze:
@@ -54,6 +54,20 @@ def read_csv(path: Path) -> list[dict]:
 
 def append_csv(path: Path, fields: list[str], rows: list[dict]) -> None:
     new = not path.exists()
+    if not new:
+        with path.open(newline="", encoding="utf-8") as f:
+            kopf = next(csv.reader(f), [])
+        # Kamen Spalten hinzu, muss die Datei einmal mit neuer Kopfzeile
+        # umgeschrieben werden - sonst haetten die neuen Zeilen mehr Felder
+        # als die Kopfzeile ankuendigt.
+        if kopf and kopf != fields:
+            alt = read_csv(path)
+            path.unlink()
+            with path.open("w", newline="", encoding="utf-8") as f:
+                w = csv.DictWriter(f, fieldnames=fields)
+                w.writeheader()
+                for r in alt:
+                    w.writerow({k: r.get(k, "") for k in fields})
     with path.open("a", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=fields)
         if new:
@@ -136,18 +150,30 @@ def fetch_jobs(term: str, session: requests.Session) -> dict:
 
 # ---------- Google Trends ----------
 
-def summarize_series(values: list[float]) -> tuple[float, float, float | None]:
-    """recent = Mittel der letzten 2 vollen Wochen, baseline = Mittel der 8 Wochen davor."""
+def summarize_series(values: list[float]) -> tuple[float, float, float | None, str]:
+    """recent = Mittel der letzten 2 vollen Wochen, baseline = Mittel der 8 Wochen davor.
+
+    Google liefert fuer ein Dreimonatsfenster je nach Begriff taegliche oder
+    woechentliche Punkte. Bei taeglichen Punkten sind zwei Wochen 14 Werte, nicht
+    zwei - sonst vergliche man zwei Tage mit acht Tagen, und ein einzelner Tag ohne
+    Suchanfragen sieht dann wie ein Einbruch aus. Das Raster wird mitgegeben, damit
+    im Verlauf erkennbar bleibt, worauf eine Zeile beruht.
+    """
     vals = [float(v) for v in values if v is not None]
     if len(vals) < 4:
         raise RuntimeError("zu wenige Datenpunkte")
-    # Die letzte Woche ist bei Google oft unvollständig: weglassen.
+    # Ein Dreimonatsfenster hat rund 13 Wochen oder rund 90 Tage.
+    taeglich = len(vals) > 20
+    raster = "taeglich" if taeglich else "woechentlich"
+    schritt = 7 if taeglich else 1
+    # Der letzte Punkt ist bei Google oft unvollständig: weglassen.
     body = vals[:-1]
-    recent = statistics.mean(body[-2:])
-    base_slice = body[-10:-2] or body[:-2]
+    n_recent, n_base = 2 * schritt, 8 * schritt
+    recent = statistics.mean(body[-n_recent:])
+    base_slice = body[-(n_recent + n_base):-n_recent] or body[:-n_recent]
     baseline = statistics.mean(base_slice) if base_slice else 0.0
     ratio = round(recent / baseline, 2) if baseline else None
-    return round(recent, 1), round(baseline, 1), ratio
+    return round(recent, 1), round(baseline, 1), ratio, raster
 
 
 def serpapi_get(data_type: str, term: str, key: str, session: requests.Session) -> dict:
@@ -280,11 +306,12 @@ def main() -> int:
                 continue
             try:
                 values, related, source = fetch_trend(term, session)
-                recent, baseline, ratio = summarize_series(values)
+                recent, baseline, ratio, raster = summarize_series(values)
                 # Null nach deutlichem Interesse ist fast immer ein Abrufproblem, kein echter Einbruch.
                 status = "verdaechtig" if recent == 0 and baseline >= 10 else "ok"
                 trend_rows.append({"date": TODAY, "niche": niche, "term": term, "recent": recent,
                                    "baseline": baseline, "ratio": ratio if ratio is not None else "",
+                                   "punkte": len(values), "raster": raster,
                                    "source": source, "status": status})
                 for q in related:
                     related_rows.append({"date": TODAY, "niche": niche, "term": term, **q})

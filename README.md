@@ -14,7 +14,10 @@ Die Jobsuche hat keine offizielle, dokumentierte Schnittstelle. Genutzt wird der
 **Google Trends** für Deutschland, Zeitraum 3 Monate, pro Begriff:
 - `recent`: Mittel der letzten zwei vollen Wochen
 - `baseline`: Mittel der acht Wochen davor
+- `punkte`, `raster`: Zahl der Datenpunkte und ob Google tägliche oder wöchentliche Werte geliefert hat
 - `ratio`: `recent / baseline`. Werte über 1,3 oder unter 0,7 gelten als auffällig.
+
+Für ein Dreimonatsfenster liefert Google je nach Begriff rund 13 wöchentliche oder rund 90 tägliche Punkte. Zwei Wochen sind deshalb mal zwei und mal vierzehn Werte; das Skript erkennt das an der Zahl der Punkte. Ohne diese Unterscheidung verglich es bei täglichen Reihen zwei Tage mit acht Tagen, und ein einzelner Tag ohne Suchanfragen sah aus wie ein Einbruch. Zeilen aus Läufen vor dem 17.11.2026 haben `raster` nicht gefüllt und können davon betroffen sein.
 
 Abgefragt werden pro Woche die Begriffe aller Fokus- und Kandidaten-Nischen sowie im Wechsel die Hälfte der beobachteten Nischen; pausierte Nischen gar nicht (siehe `status` in `config.json`). Zwischen den Anfragen liegen 25 Sekunden. Sperrt Google, werden die restlichen Begriffe der Woche übersprungen. Ein Wert von 0 nach deutlichem Interesse wird als `verdaechtig` markiert und nicht ausgewertet.
 
@@ -44,11 +47,7 @@ Schlüssel hinterlegen:
 gh secret set SERPAPI_KEY
 ```
 
-Der kostenlose Tarif umfasst 250 Abfragen im Monat bei einer Durchsatzgrenze von 50 pro Stunde. Die Begriffe pro Woche sind darauf ausgelegt: rund 40, also höchstens 215 in einem Monat mit fünf Sonntagen. Ein manuell gestarteter Lauf zählt mit. Reicht der Durchsatz nicht, lässt sich die Pause hochsetzen — bei 75 Sekunden bleibt der Lauf unter 50 Abfragen pro Stunde und dauert gut eine Stunde:
-
-```bash
-gh variable set TRENDS_PAUSE --body 75
-```
+Der kostenlose Tarif umfasst 250 Abfragen im Monat bei einer Durchsatzgrenze von 50 pro Stunde. Die Begriffe pro Woche sind darauf ausgelegt: rund 40, also höchstens 215 in einem Monat mit fünf Sonntagen. Ein manuell gestarteter Lauf zählt mit. Die Pause ergibt sich aus dem Stundendurchsatz (siehe oben), eine eigene `TRENDS_PAUSE` ist dafür nicht nötig.
 
 Verwandte Suchanfragen sind über SerpApi eine **zweite** Abfrage je Begriff und verdoppeln damit den Verbrauch. Sie sind deshalb abgeschaltet, bis die Repository-Variable `SERPAPI_RELATED` auf `1` steht:
 
