@@ -110,3 +110,43 @@ date,niche,term,recent,baseline,ratio,source,status
 2026-11-15,D3,KI Rendering,,,,,uebersprungen
 2026-11-15,MB,digitaler Produktpass,,,,,uebersprungen
 2026-11-15,GEO,ChatGPT Shopping,,,,,uebersprungen
+2026-11-17,SB,Umsatzsteuervoranmeldung,20.5,40.4,0.51,serpapi,ok
+2026-11-17,SB,Kleinunternehmerregelung,54.5,54.9,0.99,serpapi,ok
+2026-11-17,SB,Zusammenfassende Meldung,3.5,7.2,0.48,serpapi,ok
+2026-11-17,SB,Umsatzsteuererklärung,23.0,23.0,1.0,serpapi,ok
+2026-11-17,SB,Einkommensteuererklärung,51.0,52.8,0.97,serpapi,ok
+2026-11-17,SB,Buchhaltung Excel,29.5,45.4,0.65,serpapi,ok
+2026-11-17,AP,Telematikinfrastruktur Pflege,0.0,0.0,,serpapi,ok
+2026-11-17,BW,Servicewohnen,6.0,7.0,0.86,serpapi,ok
+2026-11-17,BF,Betreutes Wohnen finden,0.0,1.1,0.0,serpapi,ok
+2026-11-17,PA,Pflegefachkraft Gehalt,25.5,30.0,0.85,serpapi,ok
+2026-11-17,PA,Ausbildung Pflegefachkraft,50.5,50.9,0.99,serpapi,ok
+2026-11-17,PA,Quereinstieg Pflege,0.0,10.1,0.0,serpapi,verdaechtig
+2026-11-17,AW,VgV Verfahren,44.5,53.4,0.83,serpapi,ok
+2026-11-17,FM,Fördermittel beantragen,88.0,45.2,1.94,serpapi,ok
+2026-11-17,FM,BAFA Antrag,28.5,27.8,1.03,serpapi,ok
+2026-11-17,FM,KfW Förderung Antrag,15.0,15.6,0.96,serpapi,ok
+2026-11-17,SP,Heimaufsicht,10.0,9.8,1.03,serpapi,ok
+2026-11-17,SP,Eigenanteil Pflegeheim,16.5,16.4,1.01,serpapi,ok
+2026-11-17,SP,barrierefreies Bauen,49.0,38.0,1.29,serpapi,ok
+2026-11-17,KI,KI Richtlinie,61.0,61.2,1.0,serpapi,ok
+2026-11-17,KI,Schatten KI,0.0,27.8,0.0,serpapi,verdaechtig
+2026-11-17,KI,Vibe Coding,33.5,41.0,0.82,serpapi,ok
+2026-11-17,V,Kurtaxe,30.5,26.9,1.13,serpapi,ok
+2026-11-17,V,Ferienwohnung Steuer,0.0,43.1,0.0,serpapi,verdaechtig
+2026-11-17,R,Pflegekräfte Ausland,50.0,19.5,2.56,serpapi,ok
+2026-11-17,A,BFSG,6.5,10.6,0.61,serpapi,ok
+2026-11-17,A,Barrierefreiheit Website,8.5,7.8,1.1,serpapi,ok
+2026-11-17,WEG,WEG Verwaltung,30.5,28.9,1.06,serpapi,ok
+2026-11-17,E,Sanierungsfahrplan,24.0,24.0,1.0,serpapi,ok
+2026-11-17,E,Heizlastberechnung,60.5,51.4,1.18,serpapi,ok
+2026-11-17,W,Handwerker finden,23.0,22.5,1.02,serpapi,ok
+2026-11-17,P,Pflegeheim finden,34.5,29.0,1.19,serpapi,ok
+2026-11-17,P,Pflegeplatz,17.5,20.2,0.86,serpapi,ok
+2026-11-17,I,Sonderumlage,9.0,12.9,0.7,serpapi,ok
+2026-11-17,D,Denkmal AfA,0.0,0.5,0.0,serpapi,ok
+2026-11-17,PV,Zählerwechsel PV,,,,,fehler
+2026-11-17,EA,Dienstwagen laden zuhause,,,,,fehler
+2026-11-17,WS,Mieterselbstauskunft,57.0,55.2,1.03,serpapi,ok
+2026-11-17,D3,KI Rendering,0.0,29.2,0.0,serpapi,verdaechtig
+2026-11-17,GEO,GEO Optimierung,22.0,54.2,0.41,serpapi,ok
